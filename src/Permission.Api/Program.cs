@@ -1,5 +1,5 @@
 
-namespace Permission.Api
+namespace Permissions.Api
 {
     public class Program
     {

@@ -1,4 +1,6 @@
-﻿namespace Permission.Api.Application.Commands
+﻿using MediatR;
+
+namespace Permissions.Api.Application.Commands
 {
     public class RequestPermissionCommand
     {

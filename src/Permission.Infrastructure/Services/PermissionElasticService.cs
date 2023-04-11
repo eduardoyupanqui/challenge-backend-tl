@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Permission.Infrastructure.Services
+namespace Permissions.Infrastructure.Services
 {
     public class PermissionElasticService
     {

@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["src/Permission.Api/Permission.Api.csproj", "src/Permission.Api/"]
-RUN dotnet restore "src/Permission.Api/Permission.Api.csproj"
+COPY ["src/Permissions.Api/Permissions.Api.csproj", "src/Permissions.Api/"]
+RUN dotnet restore "src/Permissions.Api/Permissions.Api.csproj"
 COPY . .
-WORKDIR "/src/src/Permission.Api"
-RUN dotnet build "Permission.Api.csproj" -c Release -o /app/build
+WORKDIR "/src/src/Permissions.Api"
+RUN dotnet build "Permissions.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Permission.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Permissions.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Permission.Api.dll"]
+ENTRYPOINT ["dotnet", "Permissions.Api.dll"]

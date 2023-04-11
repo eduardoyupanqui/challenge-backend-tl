@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Permission.Api", "src\Permission.Api\Permission.Api.csproj", "{D490DF30-D366-4A19-8348-3BD263ABF940}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Permissions.Api", "src\Permission.Api\Permissions.Api.csproj", "{D490DF30-D366-4A19-8348-3BD263ABF940}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Permission.Infrastructure", "src\Permission.Infrastructure\Permission.Infrastructure.csproj", "{5E32CDB7-1330-4DA0-9ED5-4CF6FD6886D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Permissions.Infrastructure", "src\Permission.Infrastructure\Permissions.Infrastructure.csproj", "{5E32CDB7-1330-4DA0-9ED5-4CF6FD6886D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Permission.Domain", "src\Permission.Domain\Permission.Domain.csproj", "{62F648F2-C86A-4717-A4B1-A51354BF6145}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Permissions.Domain", "src\Permission.Domain\Permissions.Domain.csproj", "{62F648F2-C86A-4717-A4B1-A51354BF6145}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

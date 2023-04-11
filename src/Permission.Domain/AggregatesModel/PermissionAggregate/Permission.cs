@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Permission.Domain.AggregatesModel.PermissionAggregate
+namespace Permissions.Domain.AggregatesModel.PermissionAggregate
 {
     public class Permission
     {

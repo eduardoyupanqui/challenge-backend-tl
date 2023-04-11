@@ -1,4 +1,7 @@
-﻿namespace Permission.Api.Application.Queries
+﻿using MediatR;
+using Permissions.Api.Application.Commands;
+
+namespace Permissions.Api.Application.Queries
 {
     public class GetPermissionsQuery
     {

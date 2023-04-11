@@ -1,4 +1,5 @@
-﻿namespace Permission.Api.Application.Commands
+﻿using MediatR;
+
 {
     public class ModifyPermissionCommand
     {

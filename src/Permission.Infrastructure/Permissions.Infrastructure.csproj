@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Permission.Domain\Permission.Domain.csproj" />
+    <ProjectReference Include="..\Permission.Domain\Permissions.Domain.csproj" />
   </ItemGroup>
 
 </Project>
