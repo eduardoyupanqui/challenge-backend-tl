@@ -1,25 +1,32 @@
 ﻿using MediatR;
 using Permissions.Api.Application.Commands;
+using Permissions.Domain.AggregatesModel.EmployeeAggregate;
+using Permissions.Domain.AggregatesModel.PermissionAggregate;
+using System.Linq;
 
 namespace Permissions.Api.Application.Queries
 {
     public class GetPermissionsQuery : IRequest<IEnumerable<PermissionDto>>
     {
-        public GetPermissionsQuery()
+        public int EmployeeId { get; private set; }
+        public GetPermissionsQuery(int employeeId)
         {
-
+            EmployeeId = employeeId;
         }
 
         public class GetPermissionsQueryHandler : IRequestHandler<GetPermissionsQuery, IEnumerable<PermissionDto>>
         {
             private readonly ILogger<GetPermissionsQueryHandler> _logger;
-            public GetPermissionsQueryHandler(ILogger<GetPermissionsQueryHandler> logger)
+            private readonly IEmployeeRepository _employeeRepository;
+            public GetPermissionsQueryHandler(ILogger<GetPermissionsQueryHandler> logger, IEmployeeRepository employeeRepository)
             {
                 _logger = logger;
+                _employeeRepository = employeeRepository;
             }
-            public Task<IEnumerable<PermissionDto>> Handle(GetPermissionsQuery request, CancellationToken cancellationToken)
+            public async Task<IEnumerable<PermissionDto>> Handle(GetPermissionsQuery request, CancellationToken cancellationToken)
             {
-                throw new NotImplementedException();
+                var permissions = await _employeeRepository.GetAsync(request.EmployeeId);
+                return permissions.Permissions.Select(p => new PermissionDto() { PermissionId = p.Id, Tittle = p.Tittle, Description = p.Description, PermissionType = p.PermissionType });
             }
         }
     }

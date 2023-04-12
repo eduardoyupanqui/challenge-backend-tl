@@ -1,4 +1,7 @@
 
+using System.Reflection;
+using Permissions.Infrastructure;
+
 namespace Permissions.Api
 {
     public class Program
@@ -13,6 +16,13 @@ namespace Permissions.Api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            //MetiatR DependencyInjection
+            builder.Services.AddMediatR(config => {
+                config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+            });
+
+            builder.Services.AddInfrastructure(builder.Configuration, builder.Environment.IsDevelopment());
 
             var app = builder.Build();
 

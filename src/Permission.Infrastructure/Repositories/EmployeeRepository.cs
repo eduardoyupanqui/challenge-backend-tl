@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Permissions.Infrastructure.Repositories
 {
-    internal class EmployeeRepository : IEmployeeRepository
+    public class EmployeeRepository : IEmployeeRepository
     {
         private readonly PermissionDbContext _context;
 

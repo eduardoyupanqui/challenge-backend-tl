@@ -1,4 +1,7 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Permissions.Api.Application.Commands;
+using Permissions.Api.Application.Queries;
 
 namespace Permissions.Api.Controllers
 {
@@ -6,39 +9,54 @@ namespace Permissions.Api.Controllers
     [Route("[controller]")]
     public class PermissionController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
         private readonly ILogger<PermissionController> _logger;
+        private readonly IMediator _mediator;
 
-        public PermissionController(ILogger<PermissionController> logger)
+        public PermissionController(ILogger<PermissionController> logger, IMediator mediator)
         {
             _logger = logger;
+            _mediator = mediator;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        /// <summary>
+        /// Get all permissions from employee
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("get-permissions")]
+        [ProducesResponseType(typeof(IEnumerable<PermissionDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetPermissions([FromQuery] int employeeId)
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            var result = await _mediator.Send(new GetPermissionsQuery(employeeId));
+            return Ok(result);
         }
-    }
 
-    public class WeatherForecast
-    {
-        public DateOnly Date { get; set; }
+        /// <summary>
+        /// Create permission
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("request-permission")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> RequestPermission(RequestPermissionCommand request)
+        {
+            var result = await _mediator.Send(request);
+            return Ok(result);
+        }
 
-        public int TemperatureC { get; set; }
-
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-
-        public string? Summary { get; set; }
+        /// <summary>
+        /// Modify permission
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("modify-permission")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ModifyPermission(ModifyPermissionCommand request)
+        {
+            var result = await _mediator.Send(request);
+            return Ok(result);
+        }
     }
 }

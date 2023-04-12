@@ -20,7 +20,10 @@ namespace Permissions.Infrastructure.EntityConfigurations
             builder.Property(cr => cr.Tittle).IsRequired(false);
             builder.Property(cr => cr.Description).IsRequired(false);
 
-            builder.Property<int>("EmployeeId").IsRequired();
+            builder.HasMany(b => b.Employees)
+                .WithOne()
+                .HasForeignKey(e => e.Id)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder
                 .Property<int>("_permissionTypeId")

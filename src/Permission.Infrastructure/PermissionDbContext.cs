@@ -13,9 +13,11 @@ namespace Permissions.Infrastructure
         public DbSet<Employee> Employees => Set<Employee>();
         public DbSet<Permission> Permissions => Set<Permission>();
 
-        public Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
+        public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var result = await base.SaveChangesAsync(cancellationToken);
+
+            return true;
         }
     }
 }

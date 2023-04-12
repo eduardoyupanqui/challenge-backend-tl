@@ -1,4 +1,5 @@
-﻿using Permissions.Domain.SeedWork;
+﻿using Permissions.Domain.AggregatesModel.EmployeeAggregate;
+using Permissions.Domain.SeedWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,19 +10,33 @@ namespace Permissions.Domain.AggregatesModel.PermissionAggregate
 {
     public class Permission : Entity
     {
-        public int Id { get; set; }
-        public string Tittle { get; set; }
-        public string Description { get; set; }
+        public string Tittle { get; private set; }
+        public string Description { get; private set; }
         public PermissionType PermissionType { get; private set; }
         private int _permissionTypeId;
 
-        public Permission(int permissionId, string tittle, string description, int permissionType)
+
+        private readonly List<Employee> _employees;
+        public IReadOnlyCollection<Employee> Employees => _employees;
+
+        protected Permission()
         {
-            Id = permissionId;
+            _employees = new List<Employee>();
+        }
+        public Permission(string tittle, string description, PermissionType permissionType)
+        {
             Tittle = tittle;
             Description = description;
-            _permissionTypeId = permissionType;
-            PermissionType = Enumeration.FromValue<PermissionType>(permissionType);
+            PermissionType = permissionType;
+            _permissionTypeId = permissionType.Id;
+        }
+
+        public void UpdatePermission(string tittle, string description, PermissionType permissionType)
+        {
+            Tittle = tittle;
+            Description = description;
+            PermissionType = permissionType;
+            _permissionTypeId = permissionType.Id;
         }
     }
 }

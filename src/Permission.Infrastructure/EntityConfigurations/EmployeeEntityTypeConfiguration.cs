@@ -15,7 +15,8 @@ namespace Permissions.Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<Employee> builder)
         {
             builder.HasKey(o => o.Id);
-            builder.Property(b => b.Nombres).IsRequired();
+            builder.Property(b => b.FirstName).IsRequired();
+            builder.Property(b => b.LastName).IsRequired();
 
             builder.HasMany(b => b.Permissions)
                 .WithOne()
