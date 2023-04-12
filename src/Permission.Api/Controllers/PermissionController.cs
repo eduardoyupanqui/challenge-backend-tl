@@ -27,6 +27,7 @@ namespace Permissions.Api.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetPermissions([FromQuery] int employeeId)
         {
+            _logger.LogInformation("Calling get");
             var result = await _mediator.Send(new GetPermissionsQuery(employeeId));
             return Ok(result);
         }
@@ -41,6 +42,7 @@ namespace Permissions.Api.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RequestPermission(RequestPermissionCommand request)
         {
+            _logger.LogInformation("Calling request");
             var result = await _mediator.Send(request);
             return Ok(result);
         }
@@ -55,6 +57,7 @@ namespace Permissions.Api.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ModifyPermission(ModifyPermissionCommand request)
         {
+            _logger.LogInformation("Calling modify");
             var result = await _mediator.Send(request);
             return Ok(result);
         }

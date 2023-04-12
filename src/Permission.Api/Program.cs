@@ -1,6 +1,7 @@
 
 using System.Reflection;
 using Permissions.Infrastructure;
+using Serilog;
 
 namespace Permissions.Api
 {
@@ -9,6 +10,11 @@ namespace Permissions.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Host.UseSerilog((hostContext, services, configuration) => {
+                configuration.WriteTo.Console();
+                configuration.Enrich.FromLogContext();
+            });
 
             // Add services to the container.
 
