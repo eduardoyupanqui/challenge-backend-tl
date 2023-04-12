@@ -1,5 +1,7 @@
 
 using System.Reflection;
+using Permissions.Api.Application.IntegrationEvents;
+using Permissions.Api.HostedService;
 using Permissions.Infrastructure;
 using Serilog;
 
@@ -28,6 +30,9 @@ namespace Permissions.Api
                 config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
 
+            //builder.Services.AddSingleton<IHostedService, ApacheKafkaConsumerService>();
+            builder.Services.AddHostedService<ApacheKafkaConsumerService>();
+            builder.Services.AddScoped<IRequestIntegrationEventService,RequestIntegrationEventService>();
             builder.Services.AddInfrastructure(builder.Configuration, builder.Environment.IsDevelopment());
 
             var app = builder.Build();

@@ -1,7 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Permissions.Api.Application.Commands;
+using Permissions.Api.Application.IntegrationEvents;
 using Permissions.Api.Application.Queries;
+using Permissions.Api.Dtos;
 
 namespace Permissions.Api.Controllers
 {
@@ -11,11 +13,13 @@ namespace Permissions.Api.Controllers
     {
         private readonly ILogger<PermissionController> _logger;
         private readonly IMediator _mediator;
+        private readonly IRequestIntegrationEventService _requestIntegrationEventService;
 
-        public PermissionController(ILogger<PermissionController> logger, IMediator mediator)
+        public PermissionController(ILogger<PermissionController> logger, IMediator mediator, IRequestIntegrationEventService requestIntegrationEventService)
         {
             _logger = logger;
             _mediator = mediator;
+            _requestIntegrationEventService = requestIntegrationEventService;
         }
 
         /// <summary>
@@ -28,6 +32,7 @@ namespace Permissions.Api.Controllers
         public async Task<IActionResult> GetPermissions([FromQuery] int employeeId)
         {
             _logger.LogInformation("Calling get");
+            await _requestIntegrationEventService.SendRequest(new RequestProcessingRequest("get"));
             var result = await _mediator.Send(new GetPermissionsQuery(employeeId));
             return Ok(result);
         }
@@ -43,6 +48,7 @@ namespace Permissions.Api.Controllers
         public async Task<IActionResult> RequestPermission(RequestPermissionCommand request)
         {
             _logger.LogInformation("Calling request");
+            await _requestIntegrationEventService.SendRequest(new RequestProcessingRequest("request"));
             var result = await _mediator.Send(request);
             return Ok(result);
         }
@@ -58,6 +64,7 @@ namespace Permissions.Api.Controllers
         public async Task<IActionResult> ModifyPermission(ModifyPermissionCommand request)
         {
             _logger.LogInformation("Calling modify");
+            await _requestIntegrationEventService.SendRequest(new RequestProcessingRequest("modify"));
             var result = await _mediator.Send(request);
             return Ok(result);
         }
