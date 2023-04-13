@@ -1,6 +1,38 @@
   
 version: '3'
 services:
+  challenge.backend.lt.api:
+    image: ${DOCKER_REGISTRY-}challenge.backend.lt.api
+    build:
+      context: .
+      dockerfile: src/Permission.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__PermissionDbContext=${DB:-Server=mssql;Database=PermissionDb;User Id=sa;Password=Pass@word;Encrypt=False;TrustServerCertificate=true;}
+      - ElasticConfig__Url=http://elasticsearch:9200
+      - Kafka__ProducerSettings__BootstrapServers=broker:9092
+      - Kafka__ConsumerSettings__BootstrapServers=broker:9092
+    ports:
+      - "80:80"
+    depends_on:
+      - mssql
+      - broker
+      - elasticsearch
+    networks:
+      - challenge
+
+  mssql:
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    ports:
+      - 1431:1433
+    environment:
+        SA_PASSWORD: "Pass@word"
+        ACCEPT_EULA: "Y"
+    volumes:
+      - sqldata:/var/opt/mssql
+    networks:
+      - challenge
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:$ELASTIC_VERSION
     ports:
@@ -16,7 +48,7 @@ services:
     volumes:
       - dataes:/usr/share/elasticsearch/data
     networks:
-      - elasticsn
+      - challenge
     restart: always
   kibana:
     image: docker.elastic.co/kibana/kibana:$ELASTIC_VERSION
@@ -31,7 +63,7 @@ services:
     depends_on:
       - elasticsearch
     networks:
-      - elasticsn
+      - challenge
     restart: always
 
 
@@ -44,7 +76,8 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-
+    networks:
+      - challenge
   broker:
     image: confluentinc/cp-kafka:latest
     container_name: broker
@@ -58,17 +91,21 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092,PLAINTEXT_INTERNAL://broker:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    networks:
+      - challenge
 
 volumes:
+  sqldata:
+    external: false
   dataes:
     driver: local
   dataki:
     driver: local
 
 networks:
-  elasticsn:
+  challenge:
     driver: bridge

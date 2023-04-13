@@ -24,6 +24,8 @@ namespace Permissions.Api
                 configuration.Enrich.FromLogContext();
             });
 
+            builder.Configuration.AddEnvironmentVariables();
+
             // Add services to the container.
 
             builder.Services.AddControllers();
