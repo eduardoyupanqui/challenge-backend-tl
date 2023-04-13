@@ -1,8 +1,14 @@
 
 using System.Reflection;
+using Elasticsearch.Net;
+using Microsoft.Extensions.Configuration;
+using Nest;
 using Permissions.Api.Application.IntegrationEvents;
+using Permissions.Api.Configs;
 using Permissions.Api.HostedService;
 using Permissions.Infrastructure;
+using Permissions.Infrastructure.Services;
+using Permissions.Infrastructure.Services.Blocks;
 using Serilog;
 
 namespace Permissions.Api
@@ -34,6 +40,24 @@ namespace Permissions.Api
             builder.Services.AddHostedService<ApacheKafkaConsumerService>();
             builder.Services.AddScoped<IRequestIntegrationEventService,RequestIntegrationEventService>();
             builder.Services.AddInfrastructure(builder.Configuration, builder.Environment.IsDevelopment());
+
+            //Elasticsearch
+            var _elasticConfig = builder.Configuration.GetSection(nameof(ElasticConfig)).Get<ElasticConfig>();
+            builder.Services.AddSingleton<IElasticClient>((sp) =>
+            {
+                var pool = new SingleNodeConnectionPool(new Uri(_elasticConfig.Url));
+                var settings = new ConnectionSettings(pool)
+                    //.DefaultIndex("defaultindex")
+                    .DefaultMappingFor<PermissionBlock>(m => m
+                        .IndexName("permission_index").IdProperty(d => d.Id));
+
+                settings.BasicAuthentication(_elasticConfig.User, _elasticConfig.Password);
+
+                if (_elasticConfig.EnableLogs)
+                    settings.DisableDirectStreaming();
+
+                return new ElasticClient(settings);
+            });
 
             var app = builder.Build();
 

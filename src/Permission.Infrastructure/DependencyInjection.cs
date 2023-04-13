@@ -5,6 +5,7 @@ using Permissions.Domain.AggregatesModel.EmployeeAggregate;
 using Permissions.Domain.AggregatesModel.PermissionAggregate;
 using Permissions.Domain.SeedWork;
 using Permissions.Infrastructure.Repositories;
+using Permissions.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,7 @@ namespace Permissions.Infrastructure
             services.AddScoped<IUnitOfWork, PermissionDbContext>();
             services.AddTransient<IEmployeeRepository, EmployeeRepository>();
             services.AddTransient<IPermissionRepository, PermissionRepository>();
+            services.AddTransient<IPermissionElasticService, PermissionElasticService>();
 
             return services;
         }

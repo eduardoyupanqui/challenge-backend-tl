@@ -3,6 +3,8 @@ using MediatR.Wrappers;
 using Permissions.Domain.AggregatesModel.EmployeeAggregate;
 using Permissions.Domain.AggregatesModel.PermissionAggregate;
 using Permissions.Domain.SeedWork;
+using Permissions.Infrastructure.Services;
+using Permissions.Infrastructure.Services.Blocks;
 
 namespace Permissions.Api.Application.Commands
 {
@@ -26,11 +28,13 @@ namespace Permissions.Api.Application.Commands
             private readonly ILogger<ModifyPermissionCommandHandler> _logger;
             private readonly IEmployeeRepository _employeeRepository;
             private readonly IPermissionRepository _permissionRepository;
-            public ModifyPermissionCommandHandler(ILogger<ModifyPermissionCommandHandler> logger, IPermissionRepository permissionRepository, IEmployeeRepository employeeRepository)
+            private readonly IPermissionElasticService _permissionElasticService;
+            public ModifyPermissionCommandHandler(ILogger<ModifyPermissionCommandHandler> logger, IPermissionRepository permissionRepository, IEmployeeRepository employeeRepository, IPermissionElasticService permissionElasticService)
             {
                 _logger = logger;
                 _permissionRepository = permissionRepository;
                 _employeeRepository = employeeRepository;
+                _permissionElasticService = permissionElasticService;
             }
 
             public async Task<bool> Handle(ModifyPermissionCommand request, CancellationToken cancellationToken)
@@ -40,6 +44,23 @@ namespace Permissions.Api.Application.Commands
                 var permission = await _permissionRepository.GetAsync(request.PermissionId);
                 permission.UpdatePermission(request.DatePermission, request.Comment, employee, Enumeration.FromValue<PermissionType>(request.PermissionType));
                 _permissionRepository.Update(permission);
+
+                await _permissionElasticService.UpdatePermission(new PermissionBlock
+                {
+                    Id = permission.Id.ToString(),
+                    Comment = permission.Comment,
+                    DatePermission = permission.DatePermission,
+                    Employee = new PermissionBlock.EmployeeBlock
+                    {
+                        FirstName = permission.Employee.FirstName,
+                        LastName = permission.Employee.LastName,
+                    },
+                    PermissionType = new PermissionBlock.PermissionTypeBlock
+                    {
+                        Id = Enumeration.FromValue<PermissionType>(request.PermissionType).Id,
+                        Name = Enumeration.FromValue<PermissionType>(request.PermissionType).Name,
+                    },
+                });
 
                 return await _permissionRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
             }
