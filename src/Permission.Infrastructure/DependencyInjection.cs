@@ -24,7 +24,7 @@ namespace Permissions.Infrastructure
                      )
                     //.UseLoggerFactory(loggerFactory)
                     //.ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning))
-                    .EnableSensitiveDataLogging(IsDevelopment)
+                    //.EnableSensitiveDataLogging(IsDevelopment)
 
                 );
 

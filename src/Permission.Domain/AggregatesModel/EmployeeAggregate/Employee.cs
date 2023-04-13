@@ -20,7 +20,7 @@ namespace Permissions.Domain.AggregatesModel.EmployeeAggregate
             _permissions = new List<Permission>();
         }
 
-        public void AddPermission(int permissionId, string tittle, string description, PermissionType permissionType)
+        public void AddPermission(int permissionId, DateTime datePermission, string description, PermissionType permissionType)
         {
             var existingPermission = _permissions.Where(o => o.Id == permissionId)
                 .SingleOrDefault();
@@ -31,7 +31,7 @@ namespace Permissions.Domain.AggregatesModel.EmployeeAggregate
             }
             else
             {
-                var permission = new Permission(tittle, description, permissionType);
+                var permission = new Permission(datePermission, description, this, permissionType);
                 _permissions.Add(permission);
             }
         }

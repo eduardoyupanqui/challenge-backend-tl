@@ -17,25 +17,30 @@ namespace Permissions.Infrastructure.EntityConfigurations
             builder.Property(o => o.Id)
                 .UseHiLo("permissionseq");
 
-            builder.Property(cr => cr.Tittle).IsRequired(false);
-            builder.Property(cr => cr.Description).IsRequired(false);
+            builder.Property(cr => cr.DatePermission).IsRequired(false);
+            builder.Property(cr => cr.Comment).IsRequired(false);
 
-            builder.HasMany(b => b.Employees)
-                .WithOne()
-                .HasForeignKey(e => e.Id)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder
+                .Property<int>("_employeeId")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("EmployeeId")
+                .IsRequired();
+
+            builder.HasOne(o => o.Employee)
+                .WithMany()
+                .HasForeignKey("_employeeId");
+
 
             builder
                 .Property<int>("_permissionTypeId")
-                // .HasField("_permissionTypeId")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
                 .HasColumnName("PermissionTypeId")
                 .IsRequired();
 
             builder.HasOne(o => o.PermissionType)
                 .WithMany()
-                // .HasForeignKey("PermissionTypeId");
                 .HasForeignKey("_permissionTypeId");
+
         }
     }
 }

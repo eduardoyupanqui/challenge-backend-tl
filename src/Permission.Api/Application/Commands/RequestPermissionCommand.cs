@@ -2,22 +2,21 @@
 using Permissions.Domain.AggregatesModel.EmployeeAggregate;
 using Permissions.Domain.AggregatesModel.PermissionAggregate;
 using Permissions.Domain.SeedWork;
+using Permissions.Infrastructure.Repositories;
 
 namespace Permissions.Api.Application.Commands
 {
     public class RequestPermissionCommand : IRequest<bool>
     {
         public int EmployeeId { get; private set; }
-        public int PermissionId { get; private set; }
-        public string Tittle { get; private set; }
-        public string Description { get; private set; }
+        public DateTime DatePermission { get; private set; }
+        public string Comment { get; private set; }
         public int PermissionType { get; set; }
-        public RequestPermissionCommand(int employeeId, int permissionId, string tittle, string description, int permissionType)
+        public RequestPermissionCommand(int employeeId, DateTime datePermission, string comment, int permissionType)
         {
             EmployeeId = employeeId;
-            PermissionId = permissionId;
-            Tittle = tittle;
-            Description = description;
+            DatePermission = datePermission;
+            Comment = comment;
             PermissionType = permissionType;
         }
 
@@ -25,27 +24,21 @@ namespace Permissions.Api.Application.Commands
         {
             private readonly ILogger<RequestPermissionCommandHandler> _logger;
             private readonly IEmployeeRepository _employeeRepository;
-            
-            public RequestPermissionCommandHandler(ILogger<RequestPermissionCommandHandler> logger, IEmployeeRepository employeeRepository)
+            private readonly IPermissionRepository _permissionRepository;
+            public RequestPermissionCommandHandler(ILogger<RequestPermissionCommandHandler> logger, IEmployeeRepository employeeRepository, IPermissionRepository permissionRepository)
             {
                 _logger = logger;
                 _employeeRepository = employeeRepository;
+                _permissionRepository = permissionRepository;
             }
             public async Task<bool> Handle(RequestPermissionCommand request, CancellationToken cancellationToken)
             {
                 var employee = await _employeeRepository.GetAsync(request.EmployeeId);
 
-                if (employee is not null)
-                {
-                    employee.AddPermission(request.PermissionId, request.Tittle, request.Description, Enumeration.FromValue<PermissionType>(request.PermissionType));
-                    _employeeRepository.Update(employee);
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
+                var newPermission = new Permission(request.DatePermission, request.Comment, employee, Enumeration.FromValue<PermissionType>(request.PermissionType));
+                _permissionRepository.Add(newPermission);
 
-                return await _employeeRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+                return await _permissionRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
             }
         }
     }

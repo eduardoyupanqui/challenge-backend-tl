@@ -10,14 +10,14 @@ namespace Permissions.Domain.AggregatesModel.PermissionAggregate
 {
     public class PermissionType : Enumeration
     {
-        public static PermissionType GlobalAccess = new PermissionType(1, nameof(GlobalAccess).ToLowerInvariant());
-        public static PermissionType SelfAccess = new PermissionType(2, nameof(SelfAccess).ToLowerInvariant());
+        public static PermissionType Health = new PermissionType(1, nameof(Health).ToLowerInvariant());
+        public static PermissionType Other = new PermissionType(2, nameof(Other).ToLowerInvariant());
         public PermissionType(int id, string name)
         : base(id, name)
         {
         }
 
-        public static IEnumerable<PermissionType> List() => new[] { GlobalAccess, SelfAccess };
+        public static IEnumerable<PermissionType> List() => new[] { Health, Other };
         public static PermissionType FromName(string name)
         {
             var state = List()

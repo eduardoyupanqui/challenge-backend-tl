@@ -26,7 +26,7 @@ namespace Permissions.Api.Application.Queries
             public async Task<IEnumerable<PermissionDto>> Handle(GetPermissionsQuery request, CancellationToken cancellationToken)
             {
                 var permissions = await _employeeRepository.GetAsync(request.EmployeeId);
-                return permissions.Permissions.Select(p => new PermissionDto() { PermissionId = p.Id, Tittle = p.Tittle, Description = p.Description, PermissionType = p.PermissionType });
+                return permissions.Permissions.Select(p => new PermissionDto() { PermissionId = p.Id, DatePermission = p.DatePermission, Comment = p.Comment, PermissionType = p.PermissionType });
             }
         }
     }
